@@ -1,52 +1,203 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
-
-    <!-- update the version number as needed -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PLACEHOLDER//></title>
     <script defer src="/__/firebase/9.6.10/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
     <script defer src="/__/firebase/9.6.10/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-database-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-storage-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
     <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <!-- OLD QUOTE ADD DIALOG <script>
+        $( function() {
+          var dialog, form,
+      
+            // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
+            Lquote = $( "#Lquote" ),
+            Lquotee = $( "#Lquotee" ),
+            password = $( "#password" ),
+            allFields = $( [] ).add( Lquote ).add( Lquotee );
+      
+          function addQuote() {
+            allFields.removeClass( "ui-state-error" );
+            writeQuota(Lquote.val(), Lquotee.val())
+            if ( true ) {
+              
+              dialog.dialog( "close" );
+            }
+            return true;
+          }
+      
+          dialog = $( "#dialog-form" ).dialog({
+            autoOpen: false,
+            height: 290,
+            width: 350,
+            modal: true,
+            buttons: {
+              "AddQuote": addQuote,
+              Cancel: function() {
+                dialog.dialog( "close" );
+              }
+            },
+            close: function() {
+              form[ 0 ].reset();
+              allFields.removeClass( "ui-state-error" );
+            }
+          });
+      
+          form = dialog.find( "form" ).on( "submit", function( event ) {
+            event.preventDefault();
+            addQuote();
+          });
+      
+          $( "#create-quote" ).button().on( "click", function() {
+            dialog.dialog( "open" );
+          });
+        } );
+    </script>-->
+    <!-- INSPIROBOT IMAGE GETTER<script>
+      function setImage(image){
+        var string;
+        $.get("https://inspirobot.me/api?generate=true",
+        {},
+        function(data){
+          image.attr('src',data)
+        });
       }
+    </script> -->
+    <!-- OLD CARD GENERATOR<script>
+      var html
+      var hashtmlset;
+      var i = 0;
+      function generateQuotes(data){
+        if(!hashtmlset){
+          html = $('#template').html();
+          rowtml = $("#row").html();
+          $('#template').remove();
+          hashtmlset = !hashtmlset
+        }
+        $('#Quotes').empty();
+        var quoteIdList = [];
+        for(entry in data){
+          if(entry != "Messages"){
+            quoteIdList.push(entry)
+          }
+        }
+        if(quoteIdList.length != 0){
+          displayQuotes(quoteIdList)
+        }
+        
+      }
+      function displayQuotes(data){
+        console.log(data)
+        console.log(i)
+        firebase.database().ref().child(data.pop()).get().then((snapshot)=>{
+          if(i==0){
+            $('#Quotes').append(html);
+            setImage($("#image"))
+            $("#image").attr('id','')
+            $("#quotb").text(snapshot.val().quote)
+            $("#name").text(snapshot.val().quotee)
+            $("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+            $("#quotb").attr('id','')
+            $("#name").attr('id','')
+          }else{
+            $("#row").append(rowtml)
+            setImage($("#image"))
+            $("#image").attr('id','')
+            $("#quotb").text(snapshot.val().quote)
+            $("#name").text(snapshot.val().quotee)
+            $("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+            $("#quotb").attr('id','')
+            $("#name").attr('id','')
+          }
+          i++
+          if(i==3){
+            $("#row").attr('id','')
+            i=0
+          }
+          if(data.length != 0){
+            displayQuotes(data)
+          }
+        })
+      }
+      function writeQuota(mesagee, nameee){
+        firebase.database().ref().get().then((snapshot)=>{
+          var msgs = snapshot.val().Messages
+          firebase.database().ref(msgs+"").set({
+            "quote": mesagee,
+            "quotee": nameee
+          })
+          var updates = {}
+          updates["Messages"] = msgs + 1
+          firebase.database().ref().update(updates).then(setTimeout(function(){window.location.reload()},50))
+        })
+      }
+    </script> -->
+    <style>
+      body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
     </style>
+    <div id="dialog-form" title="Add New Quote">
+      <form>
+        <fieldset>
+          <label for="Lquote">Quote</label>
+          <input type="text" name="Lquote" id="Lquote" value="" class="text ui-widget-content ui-corner-all"style="display:block; margin-bottom:12px; width:95%; padding: .4em;" autocomplete="off">
+          <label for="Lquotee">Quotee</label>
+          <input type="text" name="Lquotee" id="Lquotee" value="" class="text ui-widget-content ui-corner-all" style="display:block; margin-bottom:12px; width:95%; padding: .4em;"autocomplete="off">     
+          <!-- Allow form submission with keyboard without duplicating the dialog button -->
+          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+      </form>
+    </div>
   </head>
   <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-
+    <body class="w3-light-grey w3-content" style="max-width:1600px">
+      
+      <!-- !PAGE CONTENT! -->
+      <div class="w3-main" style="margin-left:0px">
+      
+        <!-- Header -->
+        <header id="portfolio">
+          <div class="w3-container">
+            <h1><b>Quotes From: <%PLACEHOLDER></b></h1>
+            <button id="create-quote">AddQuote</button>
+            <div class="w3-section w3-bottombar"></div>
+          </div>
+        </header>
+        <div class="w3-padding-16"></div>
+        
+        <div id="template">
+          <div>
+            <div class="w3-row-padding" id="row">
+              <div class="w3-third w3-container w3-margin-bottom" id="box">
+                <img id="image"src="a.png" alt="Norway" style="width:100%" class="">
+                <div class="w3-container w3-white">
+                  <p><b id="quotb">QUOTE</b></p>
+                  <p id="name">NAME</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- First Photo Grid-->
+        <div id="Quotes">
+          
+        </div>
+        <div class="w3-black w3-center w3-padding-16"></div>
+        <div class="w3-black w3-center">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></div>
+        <div class="w3-black w3-center" id="load">Firebase SDK Loading...</div>
+        <div class="w3-black w3-center w3-padding-16"></div>
+      
+      <!-- End page content -->
+      </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
@@ -54,7 +205,9 @@
         // // The Firebase SDK is initialized and available here!
         //
         // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        firebase.database().ref().get().then((snapshot) => { 
+          generateQuotes(snapshot.val())
+        });
         // firebase.firestore().doc('/foo/bar').get().then(() => { });
         // firebase.functions().httpsCallable('yourFunction')().then(() => { });
         // firebase.messaging().requestPermission().then(() => { });
