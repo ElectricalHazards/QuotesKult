@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PLACEHOLDER//></title>
+    <title><%KULT NAME%>: QuotesKult</title>
     <script defer src="/__/firebase/9.6.10/firebase-app-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
@@ -73,16 +73,17 @@
         });
       }
     </script> -->
-    <!-- OLD CARD GENERATOR<script>
-      var html
-      var hashtmlset;
+     <!-- OLD CARD GENERATOR<script>
+       
+      var html, rowtml
+      var hasSetTemplate = false;
       var i = 0;
       function generateQuotes(data){
-        if(!hashtmlset){
+        if(!hasSetTemplate){
           html = $('#template').html();
           rowtml = $("#row").html();
           $('#template').remove();
-          hashtmlset = !hashtmlset
+          hasSetTemplate = !hasSetTemplate
         }
         $('#Quotes').empty();
         var quoteIdList = [];
@@ -106,7 +107,7 @@
             $("#image").attr('id','')
             $("#quotb").text(snapshot.val().quote)
             $("#name").text(snapshot.val().quotee)
-            $("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
             $("#quotb").attr('id','')
             $("#name").attr('id','')
           }else{
@@ -115,7 +116,7 @@
             $("#image").attr('id','')
             $("#quotb").text(snapshot.val().quote)
             $("#name").text(snapshot.val().quotee)
-            $("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
             $("#quotb").attr('id','')
             $("#name").attr('id','')
           }
@@ -129,21 +130,58 @@
           }
         })
       }
-      function writeQuota(mesagee, nameee){
-        firebase.database().ref().get().then((snapshot)=>{
-          var msgs = snapshot.val().Messages
-          firebase.database().ref(msgs+"").set({
-            "quote": mesagee,
-            "quotee": nameee
-          })
-          var updates = {}
-          updates["Messages"] = msgs + 1
-          firebase.database().ref().update(updates).then(setTimeout(function(){window.location.reload()},50))
-        })
-      }
     </script> -->
+    <script>
+      function copyQuote(item){
+        $(item).find(".tooltiptext").text("\""+$(item).find(".quote").text()+"\" Copied to clipboard")
+        console.log($(item).attr('id'))
+        navigator.clipboard.writeText($(item).find(".quote").text());
+      }
+      function resetCopyTooltip(item){
+        $(item).find(".tooltiptext").text("Click to Copy Quote")
+      }
+    </script>
     <style>
       body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+      .hovergrey:hover{
+        color: rgb(80, 80, 80);
+      }
+      .tooltip {
+        position: relative;
+      }
+      /* Tooltip text */
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 140px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -75px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
     </style>
     <div id="dialog-form" title="Add New Quote">
       <form>
@@ -167,8 +205,12 @@
         <!-- Header -->
         <header id="portfolio">
           <div class="w3-container">
-            <h1><b>Quotes From: <%PLACEHOLDER></b></h1>
-            <button id="create-quote">AddQuote</button>
+            <h1 style="display:inline;""><b>Quotes From: <%KULT NAME%></b></h1>
+            <!--<button id="create-quote" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar">AddQuote</button>-->
+            <div class="w3-right" style="margin-top: 10px;">
+            <button id="change-kult" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-xxlarge">Change Kult</button>
+            <button id="login" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-xxlarge">Login</button>
+            </div>
             <div class="w3-section w3-bottombar"></div>
           </div>
         </header>
@@ -178,10 +220,11 @@
           <div>
             <div class="w3-row-padding" id="row">
               <div class="w3-third w3-container w3-margin-bottom" id="box">
-                <img id="image"src="a.png" alt="Norway" style="width:100%" class="">
-                <div class="w3-container w3-white">
-                  <p><b id="quotb">QUOTE</b></p>
-                  <p id="name">NAME</p>
+                <!--<img id="image"src="a.png" alt="Norway" style="width:100%" class="">-->
+                <div  id="copyQuote" class="w3-container w3-white tooltip"onclick="copyQuote(this)" onmouseout="resetCopyTooltip(this)">
+                    <p><b class="hovergrey quote"id="quotb" style="text-shadow: 1px 1px 0 #444; font-size: 25px"">QUOTE</b></p>
+                    <span class="tooltiptext">Click to copy quote</span>
+                    <p id="name">NAME</p>
                 </div>
               </div>
             </div>
@@ -213,7 +256,7 @@
         // firebase.messaging().requestPermission().then(() => { });
         // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
          firebase.analytics(); // call to activate
-         firebase.analytics().logEvent('tutorial_completed');
+         //firebase.analytics().logEvent('tutorial_completed');
         // firebase.performance(); // call to activate
         //
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
