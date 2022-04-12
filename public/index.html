@@ -272,6 +272,7 @@
          //firebase.analytics().logEvent('tutorial_completed');
         // firebase.performance(); // call to activate
         //
+        var provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth()
         .signInWithPopup(provider)
         .then((result) => {
