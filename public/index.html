@@ -16,48 +16,28 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-    <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
-      import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-      // Your web app's Firebase configuration
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-      const firebaseConfig = {
-        apiKey: "AIzaSyCtskCd6Ptv-JFSjAXnUvkhTJ5Mkc3gDiU",
-        authDomain: "quoteskult.firebaseapp.com",
-        projectId: "quoteskult",
-        storageBucket: "quoteskult.appspot.com",
-        messagingSenderId: "542338192081",
-        appId: "1:542338192081:web:1b9827d934ef402627abf0",
-        measurementId: "G-HBQK00MFBG"
-      };
-    
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-      const auth = getAuth();
-      const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider)
+    <script>
+      firebase.auth()
+        .signInWithPopup(provider)
         .then((result) => {
+          ///** @type {firebase.auth.OAuthCredential} */
+          var credential = result.credential;
+
           // This gives you a Google Access Token. You can use it to access the Google API.
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          const token = credential.accessToken;
+          var token = credential.accessToken;
           // The signed-in user info.
-          const user = result.user;
+          var user = result.user;
           // ...
         }).catch((error) => {
           // Handle Errors here.
-          const errorCode = error.code;
-          const errorMessage = error.message;
+          var errorCode = error.code;
+          var errorMessage = error.message;
           // The email of the user's account used.
-          const email = error.email;
-          // The AuthCredential type that was used.
-          const credential = GoogleAuthProvider.credentialFromError(error);
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
           // ...
-        });
+  });
     </script>
     <!-- OLD QUOTE ADD DIALOG <script>
         $( function() {
@@ -261,8 +241,8 @@
             <h1 style="display:inline;""><b>Quotes From: <%KULT NAME%></b></h1>
             <!--<button id="create-quote" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar">AddQuote</button>-->
             <div class="w3-right" style="margin-top: 10px;">
-            <button id="change-kult" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-xxlarge">Change Kult</button>
-            <button id="login" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-xxlarge">Login</button>
+            <button id="change-kult" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large">Change Kult</button>
+            <button id="login" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large" onclick="userLogin()">Login</button>
             </div>
             <div class="w3-section w3-bottombar"></div>
           </div>
