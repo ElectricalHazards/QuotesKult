@@ -132,11 +132,13 @@
       }
     </script> -->
     <script>
+      //Code to copy the quote to clipboard
       function copyQuote(item){
         $(item).find(".tooltiptext").text("\""+$(item).find(".quote").text()+"\" Copied to clipboard")
         console.log($(item).attr('id'))
         navigator.clipboard.writeText($(item).find(".quote").text());
       }
+      //Clears the tooltip text
       function resetCopyTooltip(item){
         $(item).find(".tooltiptext").text("Click to Copy Quote")
       }
@@ -184,6 +186,18 @@
       }
     </style>
     <div id="dialog-form" title="Add New Quote">
+      <form>
+        <fieldset>
+          <label for="Lquote">Quote</label>
+          <input type="text" name="Lquote" id="Lquote" value="" class="text ui-widget-content ui-corner-all"style="display:block; margin-bottom:12px; width:95%; padding: .4em;" autocomplete="off">
+          <label for="Lquotee">Quotee</label>
+          <input type="text" name="Lquotee" id="Lquotee" value="" class="text ui-widget-content ui-corner-all" style="display:block; margin-bottom:12px; width:95%; padding: .4em;"autocomplete="off">     
+          <!-- Allow form submission with keyboard without duplicating the dialog button -->
+          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+      </form>
+    </div>
+    <div id="login-form" title="Login:">
       <form>
         <fieldset>
           <label for="Lquote">Quote</label>
