@@ -16,12 +16,39 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha256.js"></script>
     <script>
       function initUser(uid){
-
+          if(isNewUser(uid)){
+            createUserData(uid)
+          }
+      }
+      function isNewUser(uid){
+          var db = firebase.firestore();
+          var docRef = db.collection("users").doc(uid);
+          docRef.get().then(function(doc) {
+              if (doc.exists) {
+                  return false;
+              } else {
+                  return true;
+              }
+          }).catch(function(error) {
+              console.log("Error getting document:", error);
+          });
+      }
+      function createUserData(uid){
+        var db = firebase.firestore()
+        var hash = CryptoJS.SHA256(uid).toString()
+        var usercode;
+        for(let i = 0; i < 7; i++){
+            userCode += hash.charAt(Math.floor(Math.random() * hash.length)); 
+        }
+        db.collection("users").doc(uid).set({
+            friendCode: usercode
+        })
       }
       function loginError(code, message){
-        $("#ErrorCode").text(code);
+        $("#ErrorCode").text("Error: "+code+",");
         $("#ErrorMessage").text(message);
         $( function() {
         $( "#ErrorMessageDialog" ).dialog("open");
@@ -215,8 +242,8 @@
       </form>
     </div>
     <div id="ErrorMessageDialog" title="Login Error:">
-      <p id="ErrorCode">boogity boo</p>
-      <p id="ErrorMessage">boogity boogity boogiyu</p>
+      <label id="ErrorCode">boogity boo</label><br>
+      <label id="ErrorMessage">boogity boogity boogiyu</label>
     </div>
   </head>
   <body>
@@ -232,7 +259,7 @@
             <!--<button id="create-quote" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar">AddQuote</button>-->
             <div class="w3-right" style="margin-top: 10px;">
             <button id="change-kult" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large">Change Kult</button>
-            <button id="login" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large" onclick="loginError(1,'3')">Login</button>
+            <button id="login" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large" onclick="loginError(0,'Firebase API is not active')">Login</button>
             </div>
             <div class="w3-section w3-bottombar"></div>
           </div>
