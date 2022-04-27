@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%KULT NAME%>: QuotesKult</title>
+    <title>Home: QuotesKult</title>
     <script defer src="/__/firebase/9.6.10/firebase-app-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
@@ -24,6 +24,13 @@
             //alert("User is new");
             createUserData(uid)
           }
+          else{
+            //alert("User is old");
+          }
+          getUserData(uid)
+      }
+      function getUserData(uid){
+        
       }
       function isNewUser(uid){
         return new Promise(resolve => {
@@ -68,13 +75,54 @@
       async function createUserData(uid){
         var db = firebase.firestore()
         var hash = await sha256(uid)
+        var Uuid = await ensureUniqueID()
         var userCode="";
-        for(let i = 0; i < 12; i++){
-            userCode += hash.charAt(Math.floor(Math.random() * hash.length)); 
+        var hasUsed = [-1]
+        var spot = -1;
+        while(userCode == "" || await db.collection("friendCodes").doc(userCode).get().exists){
+          for(let i = 0; i < 12; i++){
+              while(hasUsed.includes(spot)){
+                spot = Math.floor(Math.random() * hash.length)
+              }
+              hasUsed.push(spot)
+              userCode += hash[spot]
+          }
         }
         db.collection("users").doc(uid).set({
-            friendCode: userCode
+            friendCode: userCode,
+            uuid: Uuid  
         })
+        db.collection("friendCodes").doc(userCode).set({
+            valid:true
+        })
+        db.collection("uniqueIDs").doc(Uuid).set({
+            valid:true
+        })
+      }
+      function uniqueID(){
+        var d = new Date().getTime();
+        var uuid = ('yxxxxxxx-yxxx-4xxx-yxxx-'+d).replace(/[xy]/g, function(c) {
+            var r = (d + Math.random()*16)%16 | 0;
+            d = Math.floor(d/16);
+            return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+      }
+      function ensureUniqueID(){
+        return new Promise(resolve => {
+          var id = uniqueID()
+          var db = firebase.firestore()
+          var docRef = db.collection("uniqueIDs").doc(id)
+          docRef.get().then(function(doc) {
+              if (doc.exists) {
+                  resolve(ensureUniqueID())
+              } else {
+                  resolve(id)
+              }
+          }).catch(function(error) {
+              console.log("Error getting document:", error);
+          });
+        });
       }
       function login(){
         var provider = new firebase.auth.GoogleAuthProvider();
@@ -117,6 +165,10 @@
           $( "#ErrorMessageDialog" ).dialog("close");
         } );
     </script>
+    <!--
+      @NOTE: The ID for kults will be based off of the sha256 of the unix time at the time of creation. Then add the user's friendCode to the end of the ID.
+      @TODO: Need to ensure the user's friendCode is unique. 
+    -->
     <!-- OLD QUOTE ADD DIALOG <script>
         $( function() {
           var dialog, form,
@@ -174,7 +226,7 @@
         });
       }
     </script> -->
-     <!-- OLD CARD GENERATOR<script>
+    <!-- OLD CARD GENERATOR<script>
        
       var html, rowtml
       var hasSetTemplate = false;
@@ -236,7 +288,7 @@
       //Code to copy the quote to clipboard
       function copyQuote(item){
         $(item).find(".tooltiptext").text("\""+$(item).find(".quote").text()+"\" Copied to clipboard")
-        console.log($(item).attr('id'))
+       // console.log($(item).attr('id'))
         navigator.clipboard.writeText($(item).find(".quote").text());
       }
       //Clears the tooltip text
