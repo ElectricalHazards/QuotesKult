@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home: QuotesKult</title>
+    <title id="pageTitle">Home: QuotesKult</title>
     <script defer src="/__/firebase/9.6.10/firebase-app-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
@@ -175,6 +175,121 @@
       $( function() {
         $( "#ErrorMessageDialog" ).dialog();
           $( "#ErrorMessageDialog" ).dialog("close");
+        } );
+    </script>
+    <script>
+      function loadKult(kultId){
+        let i = 0;
+        let isFirst = true;
+        db = firebase.firestore();
+        db.collection("kults").doc(kultId).get().then((snapshot) =>{
+          $("#title").text("Quotes From: "+snapshot.data().title);
+          $("#pageTitle").text(snapshot.data().title +": Quoteskult")
+        })
+        db.collection("kults").doc(kultId).get().then((snapshot) =>{
+          snapshot.data().Quotes.reverse().forEach(Quote => {
+            if(i==0){
+            $('#Quotes').append(html);
+              if(isFirst){
+                $("#box").empty();
+                $("#box").append($("#create-quote"));//"<image src='addButton.png' class='' id='create-quoteI'></image>");
+                $("#create-quote").attr("src", 'addButton.png');
+                $("#create-quote").attr("class", "w3-hover-opacity");
+                $('#create-quote').show()
+                isFirst = false;
+              }
+            $("#row").append(rowtml)
+            //setImage($("#image"))
+            //$("#image").attr('id','')
+            $("#quotb").text(Quote.quote)
+            $("#name").text(Quote.quotee)
+            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+            $("#quotb").attr('id','')
+            $("#name").attr('id','')
+          }else{
+            $("#row").append(rowtml)
+           // setImage($("#image"))
+            //$("#image").attr('id','')
+            $("#quotb").text(Quote.quote)
+            $("#name").text(Quote.quotee)
+            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+            $("#quotb").attr('id','')
+            $("#name").attr('id','')
+          }
+          i++
+          if(i==3){
+            $("#row").attr('id','')
+            i=0
+          }
+          })
+        })
+      }
+      function changeKult(kultId){
+        $("#createplate").append($("#create-quote"))
+        $("#create-quote").hide()
+        $("#Quotes").empty();
+        loadKult(kultId);
+      }
+    </script>
+    <script>
+    var html, rowtml
+    var hasSetTemplate = false;
+    document.addEventListener('DOMContentLoaded', function() {
+      if(!hasSetTemplate){
+        html = $('#template').html();
+        rowtml = $("#row").html();
+        $('#template').remove();
+        hasSetTemplate = !hasSetTemplate
+      } 
+    })
+    </script>
+    <script>
+      var imagetml;
+      $( function() {
+          var dialog, form,
+      
+            // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
+            Lquote = $( "#Lquote" ),
+            Lquotee = $( "#Lquotee" ),
+            password = $( "#password" ),
+            allFields = $( [] ).add( Lquote ).add( Lquotee );
+      
+          function addQuote() {
+            allFields.removeClass( "ui-state-error" );
+            writeQuota(Lquote.val(), Lquotee.val())
+            if ( true ) {
+              
+              dialog.dialog( "close" );
+            }
+            return true;
+          }
+      
+          dialog = $( "#dialog-form" ).dialog({
+            autoOpen: false,
+            height: 290,
+            width: 350,
+            modal: true,
+            buttons: {
+              "AddQuote": addQuote,
+              Cancel: function() {
+                dialog.dialog( "close" );
+              }
+            },
+            close: function() {
+              form[ 0 ].reset();
+              allFields.removeClass( "ui-state-error" );
+            }
+          });
+      
+          form = dialog.find( "form" ).on( "submit", function( event ) {
+            event.preventDefault();
+            addQuote();
+          });
+      
+          $( "#create-quote" ).button().on( "click", function() {
+            dialog.dialog( "open" );
+          });
+          $( "#create-quote" ).hide();
         } );
     </script>
     <!--
@@ -376,7 +491,7 @@
         <!-- Header -->
         <header id="portfolio">
           <div class="w3-container">
-            <h1 style="display:inline;""><b>Quotes From: <%KULT NAME%></b></h1>
+            <h1 style="display:inline;""><b id="title">Quotes From: <%KULT NAME%></b></h1>
             <!--<button id="create-quote" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar">AddQuote</button>-->
             <div class="w3-right" style="margin-top: 10px;">
             <button id="change-kult" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large">Change Kult</button>
@@ -404,7 +519,7 @@
         <!-- First Photo Grid-->
         <div id="Quotes">
           
-        </div>
+        </div>  
         <div class="w3-black w3-center w3-padding-16"></div>
         <div class="w3-black w3-center">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></div>
         <div class="w3-black w3-center" id="load">Firebase SDK Loading...</div>
@@ -419,6 +534,7 @@
         // // The Firebase SDK is initialized and available here!
         firebase.analytics(); 
         $("#login").attr('onClick', 'login()');
+        loadKult("Home");
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
         try {
@@ -442,4 +558,6 @@
       });
     </script>
   </body>
+  
+  <div id="createplate"><image id="create-quote"></image></div>
 </html>
