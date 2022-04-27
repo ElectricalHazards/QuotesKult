@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script>
+      var Uid;
+      var UniqueID;
+      var FriendCode;
       async function initUser(uid){
         //console.log(uid)
         //console.log(await isNewUser(uid))
@@ -30,7 +33,13 @@
           getUserData(uid)
       }
       function getUserData(uid){
-        
+        db = firebase.firestore();
+        db.collection("users").doc(uid).get().then((snapshot) =>{
+            Uid = uid;
+            UniqueID = snapshot.data().uuid;
+            FriendCode = snapshot.data().friendCode;
+            console.log(Uid+" "+UniqueID+" "+FriendCode);
+        });
       }
       function isNewUser(uid){
         return new Promise(resolve => {
@@ -98,6 +107,9 @@
         db.collection("uniqueIDs").doc(Uuid).set({
             valid:true
         })
+        Uid = uid;
+        UniqueID = Uuid;
+        FriendCode = userCode;
       }
       function uniqueID(){
         var d = new Date().getTime();
