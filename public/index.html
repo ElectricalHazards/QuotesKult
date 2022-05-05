@@ -178,6 +178,7 @@
         } );
     </script>
     <script>
+      var currentKult;
       function loadKult(kultId){
         let i = 0;
         let isFirst = true;
@@ -187,42 +188,53 @@
           $("#pageTitle").text(snapshot.data().title +": Quoteskult")
         })
         db.collection("kults").doc(kultId).get().then((snapshot) =>{
+          console.log(snapshot.data())
           snapshot.data().Quotes.reverse().forEach(Quote => {
             if(i==0){
-            $('#Quotes').append(html);
-              if(isFirst){
-                $("#box").empty();
-                $("#box").append($("#create-quote"));//"<image src='addButton.png' class='' id='create-quoteI'></image>");
-                $("#create-quote").attr("src", 'addButton.png');
-                $("#create-quote").attr("class", "w3-hover-opacity");
-                $('#create-quote').show()
-                isFirst = false;
-              }
-            $("#row").append(rowtml)
-            //setImage($("#image"))
-            //$("#image").attr('id','')
-            $("#quotb").text(Quote.quote)
-            $("#name").text(Quote.quotee)
-            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
-            $("#quotb").attr('id','')
-            $("#name").attr('id','')
-          }else{
-            $("#row").append(rowtml)
-           // setImage($("#image"))
-            //$("#image").attr('id','')
-            $("#quotb").text(Quote.quote)
-            $("#name").text(Quote.quotee)
-            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
-            $("#quotb").attr('id','')
-            $("#name").attr('id','')
-          }
+              console.log("Begining of row with quote: "+Quote.quote)
+              $('#Quotes').append(html);
+                if(isFirst){
+                  $("#box").empty();
+                  $("#box").append($("#create-quote"));//"<image src='addButton.png' class='' id='create-quoteI'></image>");
+                  $("#create-quote").attr("src", 'addButton.png');
+                  $("#create-quote").attr("class", "w3-hover-opacity");
+                  $('#create-quote').show()
+                  i++
+                  isFirst = false;
+                  $("#row").append(rowtml)
+                }
+              //setImage($("#image"))
+              //$("#image").attr('id','')
+              $("#quotb").text(Quote.quote)
+              $("#name").text(Quote.quotee)
+              //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+              $("#quotb").attr('id','')
+              $("#name").attr('id','')
+              console.log("Appended quote: "+Quote.quote)
+              console.log("#row is: "+$("#row").html())
+            }else{
+              $("#row").append(rowtml)
+              //setImage($("#image"))
+              //$("#image").attr('id','')
+              $("#quotb").text(Quote.quote)
+              $("#name").text(Quote.quotee)
+              //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
+              $("#quotb").attr('id','')
+              $("#name").attr('id','')
+              console.log("Appended quote: "+Quote.quote)
+              console.log("#row is: "+$("#row").html())
+            }
           i++
+          console.log(i)
           if(i==3){
             $("#row").attr('id','')
+            console.log("NEW ROW, Last quote on row is: "+Quote.quote)
+            console.log("#row is: "+$("#row").html())
             i=0
           }
           })
         })
+        currentKult = kultId;
       }
       function changeKult(kultId){
         $("#createplate").append($("#create-quote"))
@@ -244,6 +256,32 @@
     })
     </script>
     <script>
+      function writeQuote(kultId, Quote, Quotee){
+        var db = firebase.firestore();
+        var docRef = db.collection("kults").doc(kultId);
+        docRef.get().then(function(doc) {
+            if (doc.exists) {
+                var data = doc.data();
+                var quotes = data.Quotes;
+                quotes.push({
+                  quote: Quote,
+                  quotee: Quotee,
+                  timestamp: Date.now()
+                })
+                docRef.update({
+                  Quotes: quotes
+                })
+                changeKult(kultId)
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }).catch(function(error) {
+            console.log("Error getting document:", error);
+        });
+      }
+    </script>
+    <script>
       var imagetml;
       $( function() {
           var dialog, form,
@@ -254,11 +292,10 @@
             password = $( "#password" ),
             allFields = $( [] ).add( Lquote ).add( Lquotee );
       
-          function addQuote() {
+          function addQuote(kultId) {
             allFields.removeClass( "ui-state-error" );
-            writeQuota(Lquote.val(), Lquotee.val())
+            writeQuote(kultId, Lquote.val(), Lquotee.val())
             if ( true ) {
-              
               dialog.dialog( "close" );
             }
             return true;
@@ -283,7 +320,7 @@
       
           form = dialog.find( "form" ).on( "submit", function( event ) {
             event.preventDefault();
-            addQuote();
+            addQuote(currentKult);
           });
       
           $( "#create-quote" ).button().on( "click", function() {
