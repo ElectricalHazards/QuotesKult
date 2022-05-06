@@ -18,7 +18,6 @@
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script>
       var Uid;
-      var UniqueID;
       var FriendCode;
       async function initUser(uid){
         //console.log(uid)
@@ -36,9 +35,8 @@
         db = firebase.firestore();
         db.collection("users").doc(uid).get().then((snapshot) =>{
             Uid = uid;
-            UniqueID = snapshot.data().uuid;
             FriendCode = snapshot.data().friendCode;
-            console.log(Uid+" "+UniqueID+" "+FriendCode);
+            //console.log(Uid+""+FriendCode);
         });
       }
       function isNewUser(uid){
@@ -82,12 +80,13 @@
         return hashHex;
       }
       async function createUserData(uid){
-        var db = firebase.firestore()
-        var hash = await sha256(uid)
-        var Uuid = await ensureUniqueID()
-        var userCode="";
-        var hasUsed = [-1]
-        var spot = -1;
+        let db = firebase.firestore()
+        let hash = await sha256(uid)
+        let now = Date.Now()
+        let userCode="";
+        let hasUsed = [-1]
+        let spot = -1;
+        let hashedUid = await sha256(uid+now)
         while(userCode == "" || await db.collection("friendCodes").doc(userCode).get().exists){
           for(let i = 0; i < 12; i++){
               while(hasUsed.includes(spot)){
@@ -99,42 +98,13 @@
         }
         db.collection("users").doc(uid).set({
             friendCode: userCode,
-            uuid: Uuid  
+            timestamp: now
         })
         db.collection("friendCodes").doc(userCode).set({
             valid:true
         })
-        db.collection("uniqueIDs").doc(Uuid).set({
-            valid:true
-        })
         Uid = uid;
-        UniqueID = Uuid;
         FriendCode = userCode;
-      }
-      function uniqueID(){
-        var d = new Date().getTime();
-        var uuid = ('yxxxxxxx-yxxx-4xxx-yxxx-'+d).replace(/[xy]/g, function(c) {
-            var r = (d + Math.random()*16)%16 | 0;
-            d = Math.floor(d/16);
-            return (c=='x' ? r : (r&0x3|0x8)).toString(16);
-        });
-        return uuid;
-      }
-      function ensureUniqueID(){
-        return new Promise(resolve => {
-          var id = uniqueID()
-          var db = firebase.firestore()
-          var docRef = db.collection("uniqueIDs").doc(id)
-          docRef.get().then(function(doc) {
-              if (doc.exists) {
-                  resolve(ensureUniqueID())
-              } else {
-                  resolve(id)
-              }
-          }).catch(function(error) {
-              console.log("Error getting document:", error);
-          });
-        });
       }
       function login(){
         var provider = new firebase.auth.GoogleAuthProvider();
@@ -176,8 +146,6 @@
         $( "#ErrorMessageDialog" ).dialog();
           $( "#ErrorMessageDialog" ).dialog("close");
         } );
-    </script>
-    <script>
       var currentKult;
       function loadKult(kultId){
         let i = 0;
@@ -242,11 +210,9 @@
         $("#Quotes").empty();
         loadKult(kultId);
       }
-    </script>
-    <script>
-    var html, rowtml
-    var hasSetTemplate = false;
-    document.addEventListener('DOMContentLoaded', function() {
+      var html, rowtml
+      var hasSetTemplate = false;
+      document.addEventListener('DOMContentLoaded', function() {
       if(!hasSetTemplate){
         html = $('#template').html();
         rowtml = $("#row").html();
@@ -254,8 +220,6 @@
         hasSetTemplate = !hasSetTemplate
       } 
     })
-    </script>
-    <script>
       function writeQuote(kultId, Quote, Quotee){
         var db = firebase.firestore();
         var docRef = db.collection("kults").doc(kultId);
@@ -280,8 +244,6 @@
             console.log("Error getting document:", error);
         });
       }
-    </script>
-    <script>
       var imagetml;
       $( function() {
           var dialog, form,
@@ -328,127 +290,6 @@
           });
           $( "#create-quote" ).hide();
         } );
-    </script>
-    <!--
-      @NOTE: The ID for kults will be based off of the sha256 of the unix time at the time of creation. Then add the user's friendCode to the end of the ID.
-      @TODO: Need to ensure the user's friendCode is unique. 
-    -->
-    <!-- OLD QUOTE ADD DIALOG <script>
-        $( function() {
-          var dialog, form,
-      
-            // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
-            Lquote = $( "#Lquote" ),
-            Lquotee = $( "#Lquotee" ),
-            password = $( "#password" ),
-            allFields = $( [] ).add( Lquote ).add( Lquotee );
-      
-          function addQuote() {
-            allFields.removeClass( "ui-state-error" );
-            writeQuota(Lquote.val(), Lquotee.val())
-            if ( true ) {
-              
-              dialog.dialog( "close" );
-            }
-            return true;
-          }
-      
-          dialog = $( "#dialog-form" ).dialog({
-            autoOpen: false,
-            height: 290,
-            width: 350,
-            modal: true,
-            buttons: {
-              "AddQuote": addQuote,
-              Cancel: function() {
-                dialog.dialog( "close" );
-              }
-            },
-            close: function() {
-              form[ 0 ].reset();
-              allFields.removeClass( "ui-state-error" );
-            }
-          });
-      
-          form = dialog.find( "form" ).on( "submit", function( event ) {
-            event.preventDefault();
-            addQuote();
-          });
-      
-          $( "#create-quote" ).button().on( "click", function() {
-            dialog.dialog( "open" );
-          });
-        } );
-    </script>-->
-    <!-- INSPIROBOT IMAGE GETTER<script>
-      function setImage(image){
-        var string;
-        $.get("https://inspirobot.me/api?generate=true",
-        {},
-        function(data){
-          image.attr('src',data)
-        });
-      }
-    </script> -->
-    <!-- OLD CARD GENERATOR<script>
-       
-      var html, rowtml
-      var hasSetTemplate = false;
-      var i = 0;
-      function generateQuotes(data){
-        if(!hasSetTemplate){
-          html = $('#template').html();
-          rowtml = $("#row").html();
-          $('#template').remove();
-          hasSetTemplate = !hasSetTemplate
-        }
-        $('#Quotes').empty();
-        var quoteIdList = [];
-        for(entry in data){
-          if(entry != "Messages"){
-            quoteIdList.push(entry)
-          }
-        }
-        if(quoteIdList.length != 0){
-          displayQuotes(quoteIdList)
-        }
-        
-      }
-      function displayQuotes(data){
-        console.log(data)
-        console.log(i)
-        firebase.database().ref().child(data.pop()).get().then((snapshot)=>{
-          if(i==0){
-            $('#Quotes').append(html);
-            setImage($("#image"))
-            $("#image").attr('id','')
-            $("#quotb").text(snapshot.val().quote)
-            $("#name").text(snapshot.val().quotee)
-            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
-            $("#quotb").attr('id','')
-            $("#name").attr('id','')
-          }else{
-            $("#row").append(rowtml)
-            setImage($("#image"))
-            $("#image").attr('id','')
-            $("#quotb").text(snapshot.val().quote)
-            $("#name").text(snapshot.val().quotee)
-            //$("#quotb").attr('style','text-shadow: 1px 1px 0 #444; font-size: 25px')
-            $("#quotb").attr('id','')
-            $("#name").attr('id','')
-          }
-          i++
-          if(i==3){
-            $("#row").attr('id','')
-            i=0
-          }
-          if(data.length != 0){
-            displayQuotes(data)
-          }
-        })
-      }
-    </script> -->
-    <script>
       //Code to copy the quote to clipboard
       function copyQuote(item){
         $(item).find(".tooltiptext").text("\""+$(item).find(".quote").text()+"\" Copied to clipboard")
@@ -460,6 +301,11 @@
         $(item).find(".tooltiptext").text("Click to Copy Quote")
       }
     </script>
+        <!--
+      @NOTE: The ID for kults will be based off of the sha256 of the unix time at the time of creation. Then add the user's friendCode to the end of the ID.
+      @NOTE: I think for kults to add some anynomity to who is a part of whatevef kult, all content in the kult should be encrypted with an ID only possible by using the users uid
+      @TODO: To add some security with users, rather than using the uid as the database entry, we should use the sha256 of the uid and the timestamp, therefore only the user with the propper id can see their ID and friend code 
+    -->
     <style>
       body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
       .hovergrey:hover{
