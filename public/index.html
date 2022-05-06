@@ -165,7 +165,7 @@
                   $("#box").empty();
                   $("#box").append($("#create-quote"));//"<image src='addButton.png' class='' id='create-quoteI'></image>");
                   $("#create-quote").attr("src", 'addButton.png');
-                  $("#create-quote").attr("class", "w3-hover-opacity");
+                  $("#create-quote").attr("class", "w3-hover-opacity w3-round-large");
                   $('#create-quote').show()
                   i++
                   isFirst = false;
@@ -269,7 +269,7 @@
             width: 350,
             modal: true,
             buttons: {
-              "AddQuote": addQuote,
+              "Add Quote": addQuote,
               Cancel: function() {
                 dialog.dialog( "close" );
               }
@@ -307,6 +307,12 @@
       @TODO: To add some security with users, rather than using the uid as the database entry, we should use the sha256 of the uid and the timestamp, therefore only the user with the propper id can see their ID and friend code 
     -->
     <style>
+      .ui-widget-header {
+        background: #a2a2a2;
+      }
+      fieldset{
+        background: #cacaca;
+      }
       body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
       .hovergrey:hover{
         color: rgb(80, 80, 80);
@@ -366,7 +372,7 @@
     </div>
   </head>
   <body>
-    <body class="w3-light-grey w3-content" style="max-width:1600px">
+    <body class="w3-light-grey w3-content" style="max-width:1600px;  background-color: #cacaca !important;">
       
       <!-- !PAGE CONTENT! -->
       <div class="w3-main" style="margin-left:0px">
@@ -380,7 +386,7 @@
             <button id="change-kult" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large">Change Kult</button>
             <button id="login" class="w3-button w3-border-black w3-topbar w3-bottombar w3-leftbar w3-rightbar w3-round-large" onclick="loginError(0,'Firebase API is not active')">Login</button>
             </div>
-            <div class="w3-section w3-bottombar"></div>
+            <div class="w3-section w3-bottombar" style="border-bottom: 6px solid #a2a2a2 !important;"></div>
           </div>
         </header>
         <div class="w3-padding-16"></div>
@@ -390,7 +396,7 @@
             <div class="w3-row-padding" id="row">
               <div class="w3-third w3-container w3-margin-bottom" id="box">
                 <!--<img id="image"src="a.png" alt="Norway" style="width:100%" class="">-->
-                <div  id="copyQuote" class="w3-container w3-white tooltip"onclick="copyQuote(this)" onmouseout="resetCopyTooltip(this)">
+                <div  id="copyQuote" class="w3-container w3-white tooltip  w3-round-large"onclick="copyQuote(this)" onmouseout="resetCopyTooltip(this)">
                     <p><b class="hovergrey quote"id="quotb" style="text-shadow: 1px 1px 0 #444; font-size: 25px"">QUOTE</b></p>
                     <span class="tooltiptext">Click to copy quote</span>
                     <p id="name">NAME</p>
